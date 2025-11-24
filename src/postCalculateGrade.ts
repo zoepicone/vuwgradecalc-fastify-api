@@ -12,7 +12,7 @@ async function routes(fastify: FastifyInstance, options: any) {
           200: {
             type: 'object',
             properties: {
-              calculatedGrade: { type: 'string' }
+              calculatedGrade: { type: 'number' }
             }
           }
         }
