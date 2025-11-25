@@ -10,127 +10,65 @@ the need for client-side calculations.
 
 ### Query Params
 
-```json
-{
-  "type": "object",
-  "properties": {
-    "years": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "trimesters": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "courses": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "grade": {
-                        "anyOf": [
-                          {
-                            "const": "A+",
-                            "type": "string"
-                          },
-                          {
-                            "const": "A",
-                            "type": "string"
-                          },
-                          {
-                            "const": "A-",
-                            "type": "string"
-                          },
-                          {
-                            "const": "B+",
-                            "type": "string"
-                          },
-                          {
-                            "const": "B",
-                            "type": "string"
-                          },
-                          {
-                            "const": "B-",
-                            "type": "string"
-                          },
-                          {
-                            "const": "C+",
-                            "type": "string"
-                          },
-                          {
-                            "const": "C",
-                            "type": "string"
-                          },
-                          {
-                            "const": "C-",
-                            "type": "string"
-                          },
-                          {
-                            "const": "D",
-                            "type": "string"
-                          },
-                          {
-                            "const": "E",
-                            "type": "string"
-                          },
-                          {
-                            "const": "K",
-                            "type": "string"
-                          },
-                          {
-                            "const": "L",
-                            "type": "string"
-                          }
-                        ]
-                      },
-                      "points": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "name",
-                      "grade",
-                      "points"
-                    ]
-                  }
-                }
-              },
-              "required": [
-                "courses"
-              ]
-            }
-          }
-        },
-        "required": [
-          "trimesters"
-        ]
-      }
-    }
-  },
-  "required": [
-    "years"
-  ]
-}
+```yaml
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          years:
+            type: array
+            description: A year holds a number of trimesters.
+            items:
+              type: object
+              properties:
+                trimesters:
+                  type: array
+                  description: |
+                    A trimester holds a number of courses. 
+                    There can only be three trimesters in a year.
+                  maxItems: 3
+                  items:
+                    type: object
+                    properties:
+                      courses:
+                        type: array
+                        description: |
+                          A course is the basic unit used in calculating the grade point average. 
+                          The grade and corresponding point value for each course are combined and summed to determine the final GPA.
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: |
+                                Name of the course taken.
+                            grade:
+                              type: string
+                              enum: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'E', 'K', 'L']
+                              description: |
+                                Letter value representing grade received in the course.
+                            points:
+                              type: number
+                              minimum: 0
+                              description: |
+                                Numeric value representing total number of points the course was worth.
+                                Generally 15 or 20, although we do not restrict this value.
 ```
 
 ### Responses
 
 **200**:
 
-```json
-{
-  "type": "object",
-  "properties": {
-    "calculatedGrade": {
-      "type": "number"
-    }
-  }
-}
+```yaml
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        calculatedGrade:
+          type: number
 ```
 
 **400**: Error response
@@ -174,4 +112,4 @@ the need for client-side calculations.
 
 ## `GET /schema`
 
-Returns the request schema seen in `POST /` above—I just used this to get that JSON response.
+Returns the request schema required for `POST /` in JSON form.
